@@ -1,0 +1,54 @@
+- name: Install pulp
+  hosts: deploy_host
+  become: true
+  tasks:
+  - name: Create install directories
+    ansible.builtin.file:
+      state: directory
+      path: "{{ pulp_install_dir }}/{{ item }}"
+    loop:
+    - settings/certs
+    - pulp_storage
+    - pgsql
+    - containers
+  - name: Create settings file
+    ansible.builtin.file:
+      state: touch
+      path: "{{ pulp_install_dir }}/settings/settings.py"
+  - name: Set host as content origin
+    ansible.builtin.lineinfile: 
+      path: "{{ pulp_install_dir }}/settings/settings.py"
+      line: "CONTENT_ORIGIN='http://{{ ansible_fqdn }}:8080'"
+  - name: Disable token auth
+    ansible.builtin.lineinfile: 
+      path: "{{ pulp_install_dir }}/settings/settings.py"
+      line: "TOKEN_AUTH_DISABLED=True"
+
+  - name: Install pulp podman container
+    containers.podman.podman_container:
+      name: pulp
+      publish:
+       - 8080:80
+      volume:
+      - "{{ pulp_install_dir }}/settings:/etc/pulp{{ selinux_suffix }}"
+      - "{{ pulp_install_dir }}/pulp_storage:/var/lib/pulp{{ selinux_suffix }}"
+      - "{{ pulp_install_dir }}/pgsql:/var/lib/pgsql{{ selinux_suffix }}"
+      - "{{ pulp_install_dir }}/containers:/var/lib/containers{{ selinux_suffix }}"
+      device: /dev/fuse
+      image: docker.io/pulp/pulp:3.68.1
+
+  - name: Wait for container to finish initialising
+    ansible.builtin.shell:
+      cmd: podman exec pulp bash -c 'pulpcore-manager test'
+    register: _test_output
+    until: 0 == _test_output.rc
+    retries: 10
+    delay: 10
+
+  # delay since password reset still seems to not be ready yet
+  - ansible.builtin.pause:
+      seconds: 20
+
+  - name: Reset admin password
+    ansible.builtin.shell:
+      cmd: "podman exec pulp bash -c 'pulpcore-manager reset-admin-password -p {{ pulp_password }}'"

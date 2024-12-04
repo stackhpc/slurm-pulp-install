@@ -1,0 +1,5 @@
+collections:
+  - name: stackhpc.pulp
+    version: 0.5.5
+  - name: containers.podman
+    version: 1.16.2

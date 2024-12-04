@@ -1,0 +1,4 @@
+- ansible.builtin.import_playbook: prereqs.yml
+- ansible.builtin.import_playbook: install.yml
+- ansible.builtin.import_playbook: install_cli.yml
+- ansible.builtin.import_playbook: sync_repos.yml

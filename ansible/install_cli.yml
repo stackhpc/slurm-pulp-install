@@ -1,0 +1,21 @@
+- name: Install CLI
+  hosts: deploy_host
+  become: true
+  tasks:
+  - name: Install pulp CLI
+    ansible.builtin.pip:
+      name:
+      - pulp-cli
+      - pulp-glue
+      state: present
+  # - name: Create pulp symlink to venv
+  #   ansible.builtin.file:
+  #     state: link
+  #     src: "{{ pulp_venv_dir }}/bin/pulp"
+  #     dest: /usr/bin/pulp
+  - name: Create config file
+    no_log: true
+    ansible.builtin.shell:
+      cmd: "pulp config create --base-url 'http://localhost:8080' --username {{ pulp_username }} --password {{ pulp_password }}"
+    environment:
+      PATH: "/usr/local/bin:{{ ansible_env.PATH }}"

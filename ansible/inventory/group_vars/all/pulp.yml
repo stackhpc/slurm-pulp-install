@@ -1,0 +1,69 @@
+pulp_url: http://localhost:8080
+pulp_username: admin # shouldn't be changed
+pulp_validate_certs: false
+
+pulp_repository_rpm_repos:
+  - name: baseos
+    url: https://ark.stackhpc.com/pulp/content/rocky/9.4/BaseOS/x86_64/os/20240816T002610
+    remote_username: slurm-app-ci
+    remote_password: "{{ ark_password }}"
+    policy: on_demand
+    state: present
+  - name: appstream
+    url: https://ark.stackhpc.com/pulp/content/rocky/9.4/AppStream/x86_64/os/20240816T002610
+    remote_username: slurm-app-ci
+    remote_password: "{{ ark_password }}"
+    policy: on_demand
+    state: present
+  - name: crb
+    url: https://ark.stackhpc.com/pulp/content/rocky/9.4/CRB/x86_64/os/20240816T002610
+    remote_username: slurm-app-ci
+    remote_password: "{{ ark_password }}"
+    policy: on_demand
+    state: present
+  - name: extras
+    url: https://ark.stackhpc.com/pulp/content/rocky/9.4/extras/x86_64/os/20240816T002610
+    remote_username: slurm-app-ci
+    remote_password: "{{ ark_password }}"
+    policy: on_demand
+    state: present
+  - name: epel
+    url: https://ark.stackhpc.com/pulp/content/epel/9/Everything/x86_64/20240902T080424
+    remote_username: slurm-app-ci
+    remote_password: "{{ ark_password }}"
+    policy: on_demand
+    state: present
+
+pulp_publication_rpm:
+- repository: baseos
+  state: present
+- repository: appstream
+  state: present
+- repository: crb
+  state: present
+- repository: extras
+  state: present
+- repository: epel
+  state: present
+
+pulp_distribution_rpm:
+- name: baseos
+  base_path: baseos
+  repository: baseos
+  state: present
+- name: appstream
+  base_path: appstream
+  repository: appstream
+  state: present
+- name: crb
+  base_path: crb
+  repository: crb
+  state: present
+- name: extras
+  base_path: extras
+  repository: extras
+  state: present
+- name: epel
+  base_path: epel
+  repository: epel
+  state: present

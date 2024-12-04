@@ -1,0 +1,9 @@
+- name: Set up environment
+  hosts: deploy_host
+  become: true
+  tasks:
+  - name: Install packages
+    dnf:
+      name:
+      - podman
+      - python3

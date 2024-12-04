@@ -1,0 +1,19 @@
+- name: Pull packages from Ark to pulp
+  hosts: deploy_host
+  become: true
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
+  tasks:
+  - name: Get Pulp repos from release train
+    ansible.builtin.import_role:
+      name: stackhpc.pulp.pulp_repository
+
+  - name: Create Pulp publications
+    ansible.builtin.import_role:
+      name: stackhpc.pulp.pulp_publication
+      tasks_from: rpm.yml
+
+  - name: Create Pulp distributions
+    ansible.builtin.import_role:
+      name: stackhpc.pulp.pulp_distribution
+      tasks_from: rpm.yml

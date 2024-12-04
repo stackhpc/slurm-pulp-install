@@ -1,0 +1,8 @@
+pulp_install_dir: '/home/rocky/pulp'
+selinux_is_enabled: true
+selinux_suffix: "{{ ':Z' if selinux_is_enabled else '' }}"
+
+pulp_venv_dir: '/home/rocky/pulp-env'
+
+ansible_ssh_common_args: -J sms-bastion
+ansible_user: rocky

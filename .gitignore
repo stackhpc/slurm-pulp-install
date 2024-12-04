@@ -1,0 +1,4 @@
+ansible/collections
+ansible/inventory/group_vars/all/secrets.yml
+venv
+ansible/inventory/hosts.yml
